@@ -168,10 +168,10 @@ img {
 
 /* CARD */
 .dest-card {
-  border-radius: var(--radius);
+  border-radius: 14px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
 }
 
 .dest-card:hover {
@@ -185,22 +185,25 @@ img {
   height: 220px;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   position: relative;
+  z-index: 1;
 }
 
 .dest-img::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0));
+  background: rgba(0,0,0,0.25); /* soft overlay only */
+  z-index: 2;
 }
-
 /* CONTENT */
 .dest-info {
   padding: 15px;
   background: #fff;
   position: relative;
-  z-index: 2;
+  z-index: 3;
+}
 }
 
 .dest-info h3 {
@@ -235,9 +238,15 @@ img {
   inset: 0;
   background-size: cover;
   background-position: center;
-  min-height: 260px;
+  background-repeat: no-repeat;
+  z-index: 1;
 }
 
+.pkg-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+}
 /* (kept minimal for safety - your original is fine) */
 
 /* ─────────────────────────────
