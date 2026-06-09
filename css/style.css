@@ -230,9 +230,12 @@ img {
 /* ─────────────────────────────
    PACKAGES
 ──────────────────────────── */
-.packages {
-  padding: 6rem 0;
-  background: var(--light-bg);
+.pkg-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  min-height: 260px;
 }
 
 /* (kept minimal for safety - your original is fine) */
