@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://srcreatives2-cmyk.github.io/rjholidays/sitemap.xml
