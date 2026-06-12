@@ -1295,4 +1295,18 @@ input, select, textarea { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; 
+}
+@media (max-width: 768px) {
+  .hero-secondary {
+    min-height: 100vh;
+  }
+
+  .hero-secondary .hero-content {
+    padding: 120px 24px 80px;
+  }
+
+  .gallery {
+    padding-top: 80px;
+  }
+}
