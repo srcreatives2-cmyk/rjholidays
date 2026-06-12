@@ -629,3 +629,12 @@
     padding: 20px;
   }
 }
+@media (max-width: 768px) {
+  .hero-secondary {
+    min-height: 100vh;
+  }
+
+  .hero-secondary .hero-content {
+    padding: 120px 24px 80px;
+  }
+}
