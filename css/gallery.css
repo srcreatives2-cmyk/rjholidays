@@ -645,3 +645,8 @@
   padding-top: 60px;
 
 }
+@media (max-width: 768px) {
+  .hero-secondary .hero-content {
+    padding: 40px 20px !important;
+  }
+}
