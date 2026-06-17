@@ -146,6 +146,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           { "@type": "State", "name": "Uttarakhand" },
           { "@type": "Country", "name": "Nepal" },
           { "@type": "State", "name": "Sikkim" }
+          { "@type": "State", "name": "Ladakh" },
         ],
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
@@ -154,8 +155,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-kashmir" } },
             { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-himachal" } },
             { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-nepal" } },
-            { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-spiti" } },
+            { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-sikkim" } },
             { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-ladakh" } }
+            { "@type": "Offer", "itemOffered": { "@id": "https://rjholidays.online/#pkg-uttarakhand" } }
           ]
         },
         "sameAs": [
@@ -268,14 +270,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       {
         "@type": "TouristTrip",
-        "@id": "https://rjholidays.online/#pkg-spiti",
-        "name": "Spiti Adventure Circuit",
-        "description": "Kaza, Tabo, Nako, Pin Valley and the ancient Dhankar Monastery — Spiti as it was meant to be explored.",
-        "url": "https://rjholidays.online/himachal-tour-package.html",
+        "@id": "https://rjholidays.online/#pkg-uttarakhand",
+        "name": "Uttarakhand Nature & Adventure",
+        "description": "Valley of Flowers, Mussoorie, Nainital, Almora, Kausani, Ranikhet & Jim Corbett.",
+        "url": "https://rjholidays.online/uttarakhand-tour-package.html",
         "touristType": ["Adventure", "Solo"],
         "offers": {
           "@type": "Offer",
           "price": "24500",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "validFrom": "2024-01-01",
+          "seller": { "@id": "https://rjholidays.online/#organization" }
+          organization" }
+        }
+      },
+
+      {
+        "@type": "TouristTrip",
+        "@id": "https://rjholidays.online/#pkg-sikkim",
+        "name": "Mystical Sikkim Retreat",
+        "description": "Gangtok, Tsomgo Lake, Nathula Pass, colourful monasteries and breathtaking Himalayan vistas — perfect for an unforgettable mountain escape.",
+        "url": "https://rjholidays.online/uttarakhand-tour-package.html",
+        "touristType": ["Adventure", "Family", "Group"],
+        "offers": {
+          "@type": "Offer",
+          "price": "18500",
           "priceCurrency": "INR",
           "availability": "https://schema.org/InStock",
           "validFrom": "2024-01-01",
