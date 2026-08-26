@@ -58,7 +58,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 // ── RJ Holidays backend integration ──
 // Set this to your deployed Render backend URL once live, e.g.
 // 'https://rj-holidays-backend.onrender.com'
-const RJ_API_BASE = 'https://YOUR-BACKEND.onrender.com';
+const RJ_API_BASE = 'https://rjholidays-backend.onrender.com';
 
 function getUtmParams() {
   const params = new URLSearchParams(window.location.search);
