@@ -78,34 +78,52 @@ function getUtmParams() {
 // existing WhatsApp redirect below — it never blocks or replaces it, so if the
 // backend is briefly unreachable, the WhatsApp flow customers already rely on
 // still works exactly as before.
-function submitEnquiryToBackend({ name, phone, email, destination, travellers, message }) {
+async function submitEnquiryToBackend({ name, phone, email, destination, travellers, message }) {
   const payload = {
     name,
     mobile: phone,
+    whatsapp: phone,
     email: email || '',
     destination: destination || 'Not specified',
-    adults: 1, // the current form collects a travellers *range*, not exact adults/children —
-    children: 0, // admin can refine exact numbers later in the CRM once in contact with the customer
-    special_requirements: [travellers ? `Travellers: ${travellers}` : '', message || ''].filter(Boolean).join(' | '),
+    adults: 1,
+    children: 0,
+    special_requirements: [
+      travellers ? `Travellers: ${travellers}` : '',
+      message || ''
+    ].filter(Boolean).join(' | '),
     ...getUtmParams(),
   };
 
-  return fetch(`${RJ_API_BASE}/api/enquiries`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-    .then((res) => res.json())
-    .catch((err) => {
-      console.warn('[RJ Holidays] Could not reach backend (enquiry still sent via WhatsApp):', err);
-      return null;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+
+  try {
+    const res = await fetch(`${RJ_API_BASE}/api/enquiries`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
     });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `Backend returned HTTP ${res.status}`);
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // ── Contact form (WhatsApp redirect + backend CRM submission) ──
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
-  contactForm.addEventListener('submit', (e) => {
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const name = document.getElementById('name').value.trim();
@@ -120,8 +138,12 @@ if (contactForm) {
       return;
     }
 
-    // Fire off the CRM submission — doesn't block the WhatsApp redirect below.
-    submitEnquiryToBackend({ name, phone, email, destination, travellers, message });
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.dataset.originalText = submitButton.innerHTML;
+      submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    }
 
     const waMessage = `Hi RJ Holidays! 🙏
 
@@ -134,18 +156,36 @@ if (contactForm) {
 
 I'd like to know more about your packages!`;
 
-    const encoded = encodeURIComponent(waMessage);
-    window.open(`https://wa.me/919317618833?text=${encoded}`, '_blank');
+    try {
+      // Save the enquiry first. WhatsApp opens only after the backend confirms success.
+      const result = await submitEnquiryToBackend({ name, phone, email, destination, travellers, message });
 
-    // Show success state
-    const wrap = contactForm.closest('.contact-form-wrap');
-    wrap.innerHTML = `
-      <div class="form-success">
-        <i class="fa-solid fa-circle-check"></i>
-        <h3>Redirecting to WhatsApp!</h3>
-        <p>Your enquiry has been prepared. Complete it on WhatsApp for an instant response from our travel experts.</p>
-      </div>
-    `;
+      const encoded = encodeURIComponent(waMessage);
+      window.open(`https://wa.me/919317618833?text=${encoded}`, '_blank');
+
+      const wrap = contactForm.closest('.contact-form-wrap');
+      wrap.innerHTML = `
+        <div class="form-success">
+          <i class="fa-solid fa-circle-check"></i>
+          <h3>Enquiry Received!</h3>
+          <p>Your enquiry has been saved successfully. Enquiry ID: <strong>${result.enquiry_code || 'Received'}</strong></p>
+          <p>WhatsApp is opening now so our travel experts can respond quickly.</p>
+        </div>
+      `;
+    } catch (err) {
+      console.error('[RJ Holidays] Enquiry submission failed:', err);
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = submitButton.dataset.originalText || 'Submit Enquiry';
+      }
+
+      showToast('We could not save your enquiry. Please try again. You can still contact us on WhatsApp.', 'error');
+
+      // Keep the WhatsApp fallback so the customer is never left without a contact option.
+      const encoded = encodeURIComponent(waMessage);
+      window.open(`https://wa.me/919317618833?text=${encoded}`, '_blank');
+    }
   });
 }
 
