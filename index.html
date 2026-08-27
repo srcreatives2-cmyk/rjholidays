@@ -409,7 +409,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2 class="section-title">Popular Destinations</h2>
         <p class="section-desc">From snow-capped peaks to serene valleys — every journey with RJ Holidays is crafted for memories that last a lifetime.</p>
       </div>
-      <div class="dest-grid">
+      <div class="carousel-wrap">
+      <button type="button" class="carousel-nav carousel-prev" data-carousel-target="destCarousel" aria-label="Previous destination"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="dest-grid carousel-track" id="destCarousel">
         <div class="dest-card">
           <div class="dest-img-wrap">
             <img src="https://i.ibb.co/Psj80BLK/Kashmir-Tour-Package-IMGCentury.jpg" alt="Kashmir-Tour-Package-IMGCentury" loading="lazy" />
@@ -477,6 +479,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </div>
+      <button type="button" class="carousel-nav carousel-next" data-carousel-target="destCarousel" aria-label="Next destination"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
     </div>
   </section>
 
@@ -520,7 +524,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2 class="section-title">Our Most Loved Packages</h2>
         <p class="section-desc">A few traveller favourites to start with — all-inclusive, designed by experts who have personally explored every route.</p>
       </div>
-      <div class="pkg-grid">
+      <div class="carousel-wrap">
+      <button type="button" class="carousel-nav carousel-prev" data-carousel-target="pkgCarousel" aria-label="Previous package"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="pkg-grid carousel-track" id="pkgCarousel">
 
         <div class="pkg-card">
           <div class="pkg-img-wrap">
@@ -589,6 +595,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
       </div>
+      <button type="button" class="carousel-nav carousel-next" data-carousel-target="pkgCarousel" aria-label="Next package"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
 
       <div class="pkg-viewall" style="text-align:center; margin-top:40px;">
         <a href="packages.html" class="btn-primary">View All 6 Packages <i class="fa-solid fa-arrow-right"></i></a>
@@ -639,116 +647,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="agg-count">Based on 120+ Google Reviews</span>
         </div>
       </div>
-      <div class="reviews-grid">
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar">A</div>
-            <div class="reviewer-info">
-              <strong>Amit Sharma</strong>
-              <span>Delhi</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p>"Absolutely wonderful experience! RJ Holidays organised our Kashmir trip flawlessly. Every hotel, every transfer, every meal was perfectly arranged. The Gulmarg snowfall was a dream come true. Highly recommended!"</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>2 months ago</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar p">P</div>
-            <div class="reviewer-info">
-              <strong>Priya Mehta</strong>
-              <span>Chandigarh</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p>"Best travel agency in Dharamshala, hands down. They customised our Nepal itinerary perfectly within our budget. The guide they provided in Kathmandu was exceptional. We felt safe and well-looked after."</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>3 months ago</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar r">R</div>
-            <div class="reviewer-info">
-              <strong>Rahul Verma</strong>
-              <span>Mumbai</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p>"Spiti Valley adventure with RJ Holidays was the best trip of my life. The team handled everything perfectly — from the challenging Rohtang Pass to accommodation in remote villages. Truly experienced and professional!"</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>1 month ago</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar s">S</div>
-            <div class="reviewer-info">
-              <strong>Sunita Kapoor</strong>
-              <span>Pune</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-            </div>
-          </div>
-          <p>"We were a family of 6 including elderly parents and young kids. RJ Holidays managed everything beautifully — wheelchair-friendly accommodations, easy pace itinerary. So thoughtful and accommodating!"</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>5 months ago</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar v">V</div>
-            <div class="reviewer-info">
-              <strong>Vikram Singh</strong>
-              <span>Jaipur</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p>"Ladakh trip with RJ Holidays exceeded all expectations. The Pangong Tso camp was surreal. Our guide Ramesh was knowledgeable and made the entire trip educational and fun. 100% recommended!"</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>2 weeks ago</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-avatar n">N</div>
-            <div class="reviewer-info">
-              <strong>Neha Joshi</strong>
-              <span>Bengaluru</span>
-            </div>
-            <div class="review-stars">
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p>"Booked Dharamshala weekend trip last-minute and RJ Holidays pulled it off perfectly. Triund trek was magical, hotels were clean and cosy, and the whole team was so responsive on WhatsApp!"</p>
-          <div class="review-footer">
-            <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
-            <span>3 weeks ago</span>
-          </div>
-        </div>
-
+      <div class="carousel-wrap" id="reviewsCarouselWrap">
+      <button type="button" class="carousel-nav carousel-prev" data-carousel-target="reviewsCarousel" aria-label="Previous review" hidden><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="reviews-grid carousel-track" id="reviewsCarousel" aria-live="polite">
+        <p class="reviews-status" id="reviewsStatus">Loading genuine Google reviews…</p>
+      </div>
+      <button type="button" class="carousel-nav carousel-next" data-carousel-target="reviewsCarousel" aria-label="Next review" hidden><i class="fa-solid fa-chevron-right"></i></button>
       </div>
       <div class="reviews-cta">
         <a href="https://g.page/r/CWxcRDSsEXpLEBM/review" target="_blank" rel="noopener noreferrer" class="btn-reviews">
