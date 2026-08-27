@@ -1424,3 +1424,91 @@ input, select, textarea { font-family: inherit; }
     grid-template-columns: 1fr;
   }
 }
+
+/* =============================================
+   AUTO-SLIDING CAROUSELS
+   (Popular Destinations / Most Loved Packages / Google Reviews)
+   Added without altering the existing card designs above —
+   only the grid containers become horizontally-scrolling tracks.
+   ============================================= */
+.carousel-wrap {
+  position: relative;
+}
+.carousel-track {
+  display: flex !important;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+
+.dest-grid.carousel-track > .dest-card,
+.pkg-grid.carousel-track > .pkg-card,
+.reviews-grid.carousel-track > .review-card {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* 3 cards on desktop */
+.dest-grid.carousel-track > .dest-card { width: calc((100% - 2 * 22px) / 3); }
+.pkg-grid.carousel-track > .pkg-card { width: calc((100% - 2 * 26px) / 3); }
+.reviews-grid.carousel-track > .review-card { width: calc((100% - 2 * 22px) / 3); }
+
+/* Tablet: 2 cards */
+@media (max-width: 1024px) {
+  .dest-grid.carousel-track > .dest-card { width: calc((100% - 22px) / 2); }
+  .pkg-grid.carousel-track > .pkg-card { width: calc((100% - 26px) / 2); }
+  .reviews-grid.carousel-track > .review-card { width: calc((100% - 22px) / 2); }
+}
+
+/* Mobile: 1 card */
+@media (max-width: 640px) {
+  .dest-grid.carousel-track > .dest-card,
+  .pkg-grid.carousel-track > .pkg-card,
+  .reviews-grid.carousel-track > .review-card {
+    width: 100%;
+  }
+}
+
+/* Clones used for seamless infinite looping — always visible, never fade-observed */
+.carousel-clone { opacity: 1 !important; transform: none !important; }
+
+.carousel-nav {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--white);
+  color: var(--navy);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.carousel-nav:hover { background: var(--gold); color: var(--white); }
+.carousel-prev { left: -21px; }
+.carousel-next { right: -21px; }
+
+@media (max-width: 900px) {
+  .carousel-nav { width: 36px; height: 36px; font-size: 0.8rem; }
+  .carousel-prev { left: 4px; }
+  .carousel-next { right: 4px; }
+}
+
+.reviews-status {
+  flex: 0 0 100%;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  padding: 30px 0;
+}
