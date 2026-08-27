@@ -230,8 +230,11 @@ function showToast(message, type = 'info') {
 }
 
 // ── Intersection Observer – fade-in on scroll ──
+// Note: review-card is excluded because those cards are now rendered dynamically
+// from real Google review data (see the reviews carousel section below), and
+// .carousel-clone excludes the duplicated slides used for seamless looping.
 const fadeEls = document.querySelectorAll(
-  '.dest-card, .pkg-card, .why-card, .review-card, .about-grid, .contact-item'
+  '.dest-card:not(.carousel-clone), .pkg-card:not(.carousel-clone), .why-card, .about-grid, .contact-item'
 );
 
 if ('IntersectionObserver' in window) {
@@ -307,3 +310,201 @@ const sectionObserver = new IntersectionObserver((entries) => {
 sections.forEach(s => sectionObserver.observe(s));
 
 // WhatsApp float pulse animation now handled via CSS (::after ring, GPU-compositable)
+
+/* =============================================
+   AUTO-SLIDING CAROUSELS
+   Popular Destinations, Most Loved Packages, Google Reviews.
+   Native scroll + scroll-snap gives free touch/swipe support;
+   items are cloned once on each side for a seamless infinite loop.
+   ============================================= */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initCarousel(trackId, { interval = 4000 } = {}) {
+  const track = document.getElementById(trackId);
+  if (!track) return null;
+
+  const originalItems = Array.from(track.children);
+  if (originalItems.length < 2) return null; // nothing meaningful to slide
+
+  const makeClone = (el) => {
+    const clone = el.cloneNode(true);
+    clone.classList.add('carousel-clone');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('a, button').forEach(el2 => el2.setAttribute('tabindex', '-1'));
+    return clone;
+  };
+
+  // Prepend + append one full clone set so we can loop in both directions
+  originalItems.slice().reverse().forEach(el => track.insertBefore(makeClone(el), track.firstChild));
+  originalItems.forEach(el => track.appendChild(makeClone(el)));
+
+  const setWidth = () => {
+    const first = track.children[0];
+    const style = getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+    return (first.getBoundingClientRect().width + gap) * originalItems.length;
+  };
+
+  // Jump (no animation) so the visible start is the real first item
+  track.style.scrollBehavior = 'auto';
+  track.scrollLeft = setWidth();
+  requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
+
+  let autoplayTimer = null;
+  let resumeTimer = null;
+
+  const scrollByItems = (n) => {
+    const first = track.children[0];
+    const style = getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+    const itemWidth = first.getBoundingClientRect().width + gap;
+    track.scrollBy({ left: n * itemWidth, behavior: 'smooth' });
+  };
+
+  const checkLoop = () => {
+    const total = setWidth();
+    if (track.scrollLeft >= total * 2 - 4) {
+      track.style.scrollBehavior = 'auto';
+      track.scrollLeft -= total;
+      requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
+    } else if (track.scrollLeft <= 4) {
+      track.style.scrollBehavior = 'auto';
+      track.scrollLeft += total;
+      requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
+    }
+  };
+
+  let scrollEndTimer = null;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(checkLoop, 100);
+  }, { passive: true });
+
+  const startAutoplay = () => {
+    if (prefersReducedMotion) return;
+    stopAutoplay();
+    autoplayTimer = setInterval(() => scrollByItems(1), interval);
+  };
+  const stopAutoplay = () => { if (autoplayTimer) clearInterval(autoplayTimer); };
+  const pauseThenResume = () => {
+    stopAutoplay();
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(startAutoplay, 4500);
+  };
+
+  ['touchstart', 'pointerdown', 'mouseenter'].forEach(evt =>
+    track.addEventListener(evt, pauseThenResume, { passive: true })
+  );
+  track.addEventListener('mouseleave', () => {
+    clearTimeout(resumeTimer);
+    startAutoplay();
+  });
+
+  const wrap = track.closest('.carousel-wrap');
+  if (wrap) {
+    const prevBtn = wrap.querySelector('.carousel-prev');
+    const nextBtn = wrap.querySelector('.carousel-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => { pauseThenResume(); scrollByItems(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { pauseThenResume(); scrollByItems(1); });
+  }
+
+  window.addEventListener('resize', () => {
+    track.style.scrollBehavior = 'auto';
+    track.scrollLeft = setWidth();
+    requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
+  }, { passive: true });
+
+  startAutoplay();
+
+  return { stopAutoplay, startAutoplay };
+}
+
+// Destinations & Packages carousels use the existing, unchanged card markup
+initCarousel('destCarousel');
+initCarousel('pkgCarousel');
+
+/* =============================================
+   GOOGLE REVIEWS — genuine reviews only
+   No hardcoded/demo reviews are used. Real reviews are fetched from your
+   own backend (the same RJ_API_BASE used for enquiries above), which in
+   turn calls the official Google Places API server-side so the API key
+   is never exposed in this frontend code.
+   Expected backend response shape (add a route on your Render backend):
+     GET {RJ_API_BASE}/api/google-reviews
+     -> { "rating": 4.9, "reviewCount": 124, "reviews": [
+            { "author_name": "...", "profile_photo_url": "...",
+              "rating": 5, "relative_time_description": "2 months ago",
+              "text": "..." }, ... ] }
+   Until that endpoint exists, this section shows an honest "not connected
+   yet" message instead of fake reviews.
+   ============================================= */
+async function loadGoogleReviews() {
+  const track = document.getElementById('reviewsCarousel');
+  const wrap = document.getElementById('reviewsCarouselWrap');
+  if (!track || !wrap) return;
+
+  const statusEl = document.getElementById('reviewsStatus');
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch(`${RJ_API_BASE}/api/google-reviews`, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (!res.ok) throw new Error(`Backend returned HTTP ${res.status}`);
+    const data = await res.json();
+    const reviews = Array.isArray(data.reviews) ? data.reviews : [];
+
+    if (reviews.length === 0) throw new Error('No reviews returned');
+
+    track.innerHTML = '';
+    reviews.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'review-card';
+
+      const stars = Math.round(r.rating || 5);
+      const starsHtml = Array.from({ length: 5 }, (_, i) =>
+        `<i class="fa-solid fa-star" style="${i < stars ? '' : 'opacity:0.25'}"></i>`
+      ).join('');
+
+      const avatarHtml = r.profile_photo_url
+        ? `<img src="${r.profile_photo_url}" alt="${r.author_name || 'Reviewer'}" class="reviewer-photo" referrerpolicy="no-referrer" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;" loading="lazy" />`
+        : `<div class="reviewer-avatar">${(r.author_name || '?').trim().charAt(0).toUpperCase()}</div>`;
+
+      card.innerHTML = `
+        <div class="review-header">
+          ${avatarHtml}
+          <div class="reviewer-info">
+            <strong>${r.author_name || 'Google User'}</strong>
+          </div>
+          <div class="review-stars">${starsHtml}</div>
+        </div>
+        <p>${(r.text || '').trim()}</p>
+        <div class="review-footer">
+          <img src="https://i.ibb.co/LDvF75yX/Google-Review.png" alt="Google-Review" class="google-logo" loading="lazy" />
+          <span>${r.relative_time_description || ''}</span>
+        </div>
+      `;
+      track.appendChild(card);
+    });
+
+    if (typeof data.rating === 'number') {
+      const scoreEl = document.querySelector('.agg-score');
+      if (scoreEl) scoreEl.textContent = `${data.rating.toFixed(1)} / 5`;
+    }
+    if (typeof data.reviewCount === 'number') {
+      const countEl = document.querySelector('.agg-count');
+      if (countEl) countEl.textContent = `Based on ${data.reviewCount}+ Google Reviews`;
+    }
+
+    wrap.querySelectorAll('.carousel-nav').forEach(btn => btn.hidden = false);
+    initCarousel('reviewsCarousel', { interval: 5000 });
+  } catch (err) {
+    console.warn('[RJ Holidays] Google reviews not connected yet:', err.message);
+    if (statusEl) {
+      statusEl.textContent = 'Google reviews will appear here once connected — view them directly on Google in the meantime.';
+    }
+  }
+}
+
+loadGoogleReviews();
